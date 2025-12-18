@@ -1,24 +1,22 @@
-// all articles
+const {
+    selectArticles,
+    selectArticleById
+} = require("../models/articlesModel");
 
-const db = require('./dbconnection');
-
-const getArticles = (req, res, next) => {
-    db.query('SELECT * FROM articles;')
-        .then((result) => {
-            res.status(200).send({ articles: result.rows });
-        })
-        .catch((err) => {
-            next(err);
-        });
+exports.getArticles = (req, res, next) => {
+    selectArticles()
+        .then((articles) => res.status(200).send({ articles }))
+        .catch(next);
 };
 
-// 2. GET /api/articles/:article_id - responds with a single article by article_id
+exports.getArticleById = (req, res, next) => {
+    const { article_id } = req.params;
 
-const getArticleById = (req, res, next) => {
-}
+    if (isNaN(article_id)) {
+        return res.status(400).send({ msg: "Invalid article_id" });
+    }
 
-// articles comments
-
-// filter and sort
-
-module.exports = { getArticles };
+    selectArticleById(article_id)
+        .then((article) => res.status(200).send({ article }))
+        .catch(next);
+};

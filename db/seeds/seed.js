@@ -110,6 +110,18 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
 
 
+            const topics = db.query(topicsQueryString);
+
+            const users = db.query(usersQueryString);
+
+
+
+            return Promise.all([topics, users]);
+
+        })
+
+        .then(() => {
+
             const articlesQueryString = format(
 
                 `INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING article_id, title`,
@@ -134,21 +146,11 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
             );
 
-
-
-            const topics = db.query(topicsQueryString);
-
-            const users = db.query(usersQueryString);
-
-            const articles = db.query(articlesQueryString);
-
-
-
-            return Promise.all([articles, topics, users]);
+            return db.query(articlesQueryString);
 
         })
 
-        .then(([articleResult]) => {
+        .then((articleResult) => {
 
             const articleInfo = articleResult.rows;
 
@@ -166,7 +168,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
                     const { article_id } = articleInfo.find((info) => {
 
-                        return info.article_title === comment.title;
+                        return info.title === comment.article_title;
 
                     });
 

@@ -1,6 +1,6 @@
 //this one isn't right 
 
-const db = require('./dbconnection');
+const db = require('../db/connection');
 
 const getComments = (req, res, next) => { //does this get comments for a specific article?
     db.query('SELECT * FROM comments;')
@@ -11,5 +11,5 @@ const getComments = (req, res, next) => { //does this get comments for a specifi
             next(err);
         });
 };
-
+//need a se[arate model!
 module.exports = { getComments };
