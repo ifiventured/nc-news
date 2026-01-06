@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { getCommentsByArticleId } = require("./controllers/commentsController");
 
 // controllers
 const { getTopics } = require("./controllers/topicsController");
@@ -35,7 +36,7 @@ app.get("/api", (req, res) => {
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
-
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 
 
