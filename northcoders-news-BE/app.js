@@ -1,42 +1,48 @@
-const express = require('express');
+const express = require("express");
 const cors = require("cors");
-app.use(cors());
 
+// controllers
+const { getTopics } = require("./controllers/topicsController");
+const { getArticles, getArticleById } = require("./controllers/articlesController");
 
-// Controllers
-const { getTopics } = require('./controllers/topicsController');
-const { getArticles, getArticleById } = require('./controllers/articlesController');
+// error handlrs
+const {
+    handlePsqlErrors,
+    handleCustomErrors,
+    handleServerErrors,
+    handleNotFound,
+} = require("./errors/errors");
 
 const app = express();
 
+//middleware
+app.use(cors());
 app.use(express.json());
-//routes
-app.get('/api/topics', getTopics);
+
+// api root
+app.get("/api", (req, res) => {
+    res.status(200).send({
+        endpoints: {
+            "GET /api": "list endpoints",
+            "GET /api/topics": "get topics",
+            "GET /api/articles": "get articles",
+            "GET /api/articles/:article_id": "get article by id",
+        },
+    });
+});
+
+// routes
+app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
-app.get("/api/articles/:article_id", getArticleById)
-//errors 
-// psql 
-app.use((err, req, res, next) => {
-    if (err.code === '22P02') {
-        return res.status(400).send({ msg: 'Bad request' });
-    }
-    next(err);
-});
+app.get("/api/articles/:article_id", getArticleById);
 
-// objects 
-app.use((err, req, res, next) => {
-    if (err.status && err.msg) {
-        return res.status(err.status).send({ msg: err.msg });
-    }
-    next(err);
-});
 
-app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(500).send({ msg: 'Internal server error' });
-});
 
-app.use(express.static('public'))
 
+// errors
+app.all(/.*/, handleNotFound);
+app.use(handlePsqlErrors);
+app.use(handleCustomErrors);
+app.use(handleServerErrors);
 
 module.exports = app;
