@@ -9,7 +9,10 @@ const {
     patchArticleVotes,
 } = require("./controllers/articlesController");
 
-const { getCommentsByArticleId } = require("./controllers/commentsController");
+const {
+    getCommentsByArticleId,
+    postCommentByArticleId,
+} = require("./controllers/commentsController");
 
 const {
     handleNotFound,
@@ -29,7 +32,7 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleVotes);
-
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.all(/.*/, handleNotFound);
